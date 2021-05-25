@@ -1,0 +1,2 @@
+If your python interpreter is not /usr/bin/python3 you should change the first line in the scheduler.py accordingly.
+The script must be run with Python 3. Any errors are output to scheduler.error.log.

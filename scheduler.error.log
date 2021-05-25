@@ -1,0 +1,12 @@
+05/25/2021 16:31:27 Invalid scheduler task input format, input line number: 1, input line: 300 1 /bin/run_me_daily
+05/25/2021 16:31:48 Invalid scheduler task input format, input line number: 1, input line: 30 1s/bin/run_me_daily
+05/25/2021 16:34:49 Invalid scheduler task input format, input line number: 1, input line: 30 100 /bin/run_me_daily
+05/25/2021 16:34:53 Invalid scheduler task input format, input line number: 1, input line: 30 100 /bin/run_me_daily
+05/25/2021 16:38:15 Invalid scheduler task input format, input line number: 4, input line: * 190 /bin/run_me_sixty_times
+05/25/2021 16:38:22 Invalid scheduler task input format, input line number: 4, input line: ** 19 /bin/run_me_sixty_times
+05/25/2021 21:53:28 Invalid scheduler task input format, input line number: 5, input line: 150 * /bin/run_me_hourly
+05/25/2021 21:54:15 Invalid scheduler task input format, input line number: 4, input line: * 190 /bin/run_me_sixty_times
+05/25/2021 21:54:24 Invalid scheduler task input format, input line number: 6, input line: 150 * /bin/run_me_hourly
+05/25/2021 21:54:34 Invalid scheduler task input format, input line number: 6, input line: 15 *0 /bin/run_me_hourly
+05/25/2021 21:55:00 Invalid scheduler task input format, input line number: 6, input line: 15 *0 /bin/run_me_hourly
+05/25/2021 21:55:16 Invalid scheduler task input format, input line number: 8, input line: * 110 /bin/run_me_sixty_times
