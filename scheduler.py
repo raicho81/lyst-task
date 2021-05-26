@@ -3,8 +3,11 @@ import sys
 import re
 import logging
 import itertools
+import time
 
-logging.basicConfig(filename='scheduler.error.log', format='%(asctime)s %(message)s', filemode='a',
+
+logging.Formatter.converter = time.gmtime   # Use UTC time when logging
+logging.basicConfig(filename='scheduler.error.log', format='%(asctime)s.%(msecs)03d %(message)s', filemode='a',
                     datefmt='%m/%d/%Y %H:%M:%S')
 
 
@@ -17,11 +20,18 @@ class Task:
 
 
 class Scheduler:
+    """"
+        Scheduler class. The __init__ method throws ValueError if the current time is invalid
+    """
+    class TimeValueError(ValueError):
+        def __init__self(self, msg, obj=None):
+            super(TimeValueError, self).__init__(msg, obj)
+
     def __init__(self, cur_time):
         super(Scheduler, self).__init__()
         self.tasks = []
         self.input_lines = None
-        pattern = re.compile("\d{1,2}:\d{1,2}")
+        pattern = re.compile("\d{1,2}?:\d{1,2}?")
 
         if not pattern.match(cur_time):
             raise ValueError("Invalid current time value: {}".format(cur_time))
@@ -62,10 +72,10 @@ class Scheduler:
         if cmd_h != "*" and cmd_m != "*":
             t.h = int(cmd_h)
             if t.h > 23:
-                raise ValueError("Invalid command hour value: {}".format(t.h))
+                raise self.TimeValueError("Invalid command hour value: {}".format(t.h))
             t.m = int(cmd_m)
             if t.m > 59:
-                raise ValueError("Invalid command minute value: {}".format(t.m))
+                raise self.TimeValueError("Invalid command minute value: {}".format(t.m))
             if t.h >= self.cur_h and t.m >= self.cur_m:
                 t.day = "today"
             else:
@@ -74,7 +84,7 @@ class Scheduler:
         if cmd_h != "*" and cmd_m == "*":
             t.h = int(cmd_h)
             if t.h > 23:
-                raise ValueError("Invalid command hour value: {}".format(t.h))
+                raise self.TimeValueError("Invalid command hour value: {}".format(t.h))
             t.m = 0
             if t.h < self.cur_h:
                 t.day = "tomorrow"
@@ -86,7 +96,7 @@ class Scheduler:
         if cmd_h == "*" and cmd_m != "*":
             t.m = int(cmd_m)
             if t.m > 59:
-                raise ValueError("Invalid command minute value: {}".format(t.m))
+                raise self.TimeValueError("Invalid command minute value: {}".format(t.m))
             if t.m == self.cur_m:
                 t.h = self.cur_h
                 t.day = "today"
@@ -105,14 +115,13 @@ class Scheduler:
     def check_and_parse_input(self):
         pattern = re.compile("(\d{1,2}|\*)[ |\t]+(\d{1,2}|\*)[ |\t]+.+")
         line_num = 0
-        count = itertools.count(1)
 
-        for line, line_num in zip(self.input_lines, count):
+        for line, line_num in zip(self.input_lines, itertools.count(1)):
             if pattern.match(line):
                 try:
                     self.tasks.append(self.parse_line(line))
-                except ValueError as e:
-                    logging.error(str(e) + ", input line number: {}".format(line_num))
+                except self.TimeValueError as ex:
+                    logging.error(str(ex) + ", input line number: {}".format(line_num))
             else:
                 logging.error("Invalid scheduler task input format, input line number: {}, input line: {}"
                               .format(line_num, line))
@@ -127,11 +136,11 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("Usage: ./scheduler.py <HH:MM>")
         print("The input is read from STDIN")
-        print("Example: ./scheduler.py 16:10 < config")
+        print("Example: ./scheduler.py 2:10 < config")
         sys.exit(1)
     try:
         sched = Scheduler(sys.argv[1])
-    except ValueError as e:
-        print(e)
+    except ValueError as ex:
+        print(ex)
         sys.exit(1)
     sched.run()

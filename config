@@ -5,4 +5,4 @@
 30 2 /bin/run_me_daily
 15 * /bin/run_me_hourly
 * * /bin/run_me_every_minute
-* 110 /bin/run_me_sixty_times
+* 9 /bin/run_me_sixty_times
