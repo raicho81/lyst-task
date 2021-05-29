@@ -23,15 +23,12 @@ class Scheduler:
     """"
         Scheduler class. The __init__ method throws ValueError if the current time is invalid
     """
-    class TimeValueError(ValueError):
-        def __init__self(self, msg, obj=None):
-            super(TimeValueError, self).__init__(msg, obj)
 
     def __init__(self, cur_time):
         super(Scheduler, self).__init__()
         self.tasks = []
         self.input_lines = None
-        pattern = re.compile("\d{1,2}?:\d{1,2}?")
+        pattern = re.compile("^\d+:\d+$")
 
         if not pattern.match(cur_time):
             raise ValueError("Invalid current time value: {}".format(cur_time))
@@ -72,10 +69,10 @@ class Scheduler:
         if cmd_h != "*" and cmd_m != "*":
             t.h = int(cmd_h)
             if t.h > 23:
-                raise self.TimeValueError("Invalid command hour value: {}".format(t.h))
+                raise ValueError("Invalid command hour value: {}".format(t.h))
             t.m = int(cmd_m)
             if t.m > 59:
-                raise self.TimeValueError("Invalid command minute value: {}".format(t.m))
+                raise ValueError("Invalid command minute value: {}".format(t.m))
             if t.h >= self.cur_h and t.m >= self.cur_m:
                 t.day = "today"
             else:
@@ -84,7 +81,7 @@ class Scheduler:
         if cmd_h != "*" and cmd_m == "*":
             t.h = int(cmd_h)
             if t.h > 23:
-                raise self.TimeValueError("Invalid command hour value: {}".format(t.h))
+                raise ValueError("Invalid command hour value: {}".format(t.h))
             t.m = 0
             if t.h < self.cur_h:
                 t.day = "tomorrow"
@@ -96,7 +93,7 @@ class Scheduler:
         if cmd_h == "*" and cmd_m != "*":
             t.m = int(cmd_m)
             if t.m > 59:
-                raise self.TimeValueError("Invalid command minute value: {}".format(t.m))
+                raise ValueError("Invalid command minute value: {}".format(t.m))
             if t.m == self.cur_m:
                 t.h = self.cur_h
                 t.day = "today"
@@ -110,17 +107,18 @@ class Scheduler:
             if t.m > self.cur_m:
                 t.h = self.cur_h
                 t.day = "today"
+
         return t
 
     def check_and_parse_input(self):
-        pattern = re.compile("(\d{1,2}|\*)[ |\t]+(\d{1,2}|\*)[ |\t]+.+")
+        pattern = re.compile("(\d{1,2}|\*)([ |\t]+)(\d{1,2}|\*)([ |\t]+)(.+)")
         line_num = 0
 
         for line, line_num in zip(self.input_lines, itertools.count(1)):
             if pattern.match(line):
                 try:
                     self.tasks.append(self.parse_line(line))
-                except self.TimeValueError as ex:
+                except ValueError as ex:
                     logging.error(str(ex) + ", input line number: {}".format(line_num))
             else:
                 logging.error("Invalid scheduler task input format, input line number: {}, input line: {}"
