@@ -111,7 +111,7 @@ class Scheduler:
         return t
 
     def check_and_parse_input(self):
-        pattern = re.compile("(\d{1,2}|\*)([ |\t]+)(\d{1,2}|\*)([ |\t]+)(.+)")
+        pattern = re.compile("^(\d{1,2}|\*)([ |\t]+)(\d{1,2}|\*)([ |\t]+)(.+)")
         line_num = 0
 
         for line, line_num in zip(self.input_lines, itertools.count(1)):
